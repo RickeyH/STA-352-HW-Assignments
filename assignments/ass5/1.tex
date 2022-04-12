@@ -1,0 +1,179 @@
+\section{Question 1}
+
+I used the following code to make the network in the Figure \ref{fig:fig1}.
+
+\begin{verbatim}
+    library(igraph)
+    g1 <- graph.formula(1-3,1-4,1-5,1-6,2-4,2-5,2-6,3-5,4-6)
+    igraph.options(vertex.color="dodgerblue",vertex.size=25,
+                   vertex.label.cex=1.25,vertex.label.color="white",
+                   edge.color="red",edge.arrow.size=1,edge.width=2)
+    tkplot(g1)
+\end{verbatim}
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{Figure1.eps}
+        \caption{\label{fig:fig1}Network for Question 1}
+\end{figure}
+
+\subsection{Part a}
+
+\begin{answer}
+    There are $6$ vertices and $9$ edges in the network.
+    
+    I checked my result in R:
+    \begin{verbatim}
+        # Find the number of edges and the number of vertices
+        vcount(g1)
+        ecount(g1)
+        
+        Result:
+        [1] 6
+        [1] 9
+    \end{verbatim}
+\end{answer}
+
+\subsection{Part b}
+
+\begin{answer}
+    \begin{table}[H]
+    \centering
+    \caption{degree and degree distribution of nodes}
+    \label{tab:tab1}
+        \begin{tabular}{|c|c|}
+            \hline
+            \textbf{nodes} & \textbf{degree} \\ \hline
+            1              & 4               \\ \hline
+            2              & 3               \\ \hline
+            3              & 2               \\ \hline
+            4              & 3               \\ \hline
+            5              & 3               \\ \hline
+            6              & 3               \\ \hline
+        \end{tabular}
+        \quad
+        \begin{tabular}{|c|c|}
+        \hline
+        \textbf{degree} & \textbf{frequency} \\ \hline
+        0               & 0                  \\ \hline
+        1               & 0                  \\ \hline
+        2               & 0.16667            \\ \hline
+        3               & 0.66667            \\ \hline
+        4               & 0.16667            \\ \hline
+        \end{tabular}
+    \end{table}
+    I used the code below in R to check my result
+    \begin{verbatim}
+        # Find the degrees
+        degree(g1)
+        # Find the degree distribution for the network g1
+        degree.distribution(g1)
+        
+        Result:
+        1 3 4 5 6 2 
+        4 2 3 3 3 3 
+        [1] 0.0000000 0.0000000 0.1666667 0.6666667 0.1666667
+    \end{verbatim}
+\end{answer}
+
+\subsection{Part c}
+
+\begin{answer}
+    The neighbours of node $2$ are $4$, $5$, and $6$, and they have $3$, $3$, and $3$ neighbours separately. Hence, node $2$ has nearest neighbour degree of $\tfrac{3+3+3}{3} = 3$. 
+    
+    The neighbours of node $3$ are $1$, and $5$, and they have $4$, and $3$ neighbours separately. Hence, node $3$ has nearest neighbour degree of $\tfrac{4+3}{2} = 3.5$.
+    
+    The neighbours of node $4$ are $1$, $2$, and $6$, and they have $4$, $3$, and $3$ neighbours separately. Hence, node $4$ has nearest neighbour degree of $\tfrac{4+3+3}{3} \approx 3.333$.
+    
+    I checked my result in R using the function \verb+knn+
+    \begin{verbatim}
+        # Find the average nearest neighbour degree for vertices 2, 3, and 4
+        knn(g1)$knn
+        
+        Result:
+               1        3        4        5        6        2 
+            2.750000 3.500000 3.333333 3.000000 3.333333 3.000000 
+    \end{verbatim}
+\end{answer}
+
+\subsection{Part d}\label{sec:sec1d}
+
+\begin{answer}
+    Since the largest shortest path distance in the network is $2$. 
+    
+    R code is the following
+    \begin{verbatim}
+        # Find the diameter of the network
+        diameter(g1)
+        
+        Result:
+        [1] 2
+    \end{verbatim}
+    The pair $(5,6)$ has largest shortest path distance between them, and the pair $(1,2)$ has largest shortest path distance between them.
+    I used the code below in R to return the pairs of nodes has largest shortest path distance between them 
+    \begin{verbatim}
+        # Find which pairs of nodes has largest shortest path distance 
+        between them
+        shortest.paths(g1)
+        
+        Result:
+          1 3 4 5 6 2
+        1 0 1 1 1 1 2
+        3 1 0 2 1 2 2
+        4 1 2 0 2 1 1
+        5 1 1 2 0 2 1
+        6 1 2 1 2 0 1
+        2 2 2 1 1 1 0
+    \end{verbatim}
+    Clearly, the pairs $(1,2)$ and $(5,6)$ has distance $2$.
+\end{answer}
+
+\subsection{Part e}
+
+\begin{answer}
+    I would remove the edge between $1$ and $4$ to increase the diameter by one, since the largest shortest path distance between $3$ and $4$ would be $3$.
+    
+    I used the following code to check my result in R
+    \begin{verbatim}
+        newg1 <- graph.formula(1-3,1-5,1-6,2-4,2-5,2-6,3-5,4-6)
+        igraph.options(vertex.color="dodgerblue",vertex.size=25,
+                       vertex.label.cex=1.25,vertex.label.color="white",
+                       edge.color="red",edge.arrow.size=1,edge.width=2)
+        diameter(newg1)
+        
+        Result:
+        [1] 3
+    \end{verbatim}
+\end{answer}
+
+\subsection{Part f}
+
+\begin{answer}
+    Using the result from Part d, we can find the sum of shortest distance of the paths from each node in the network
+    \begin{table}[H]
+    \centering
+    \caption{Table of closeness centralities for nodes in the network}
+    \label{tab:tab2}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{node} & \textbf{sum of shortest distances} & \textbf{closeness centrality} \\ \hline
+    1             & 6                                  & 1/6                             \\ \hline
+    2             & 8                                  & 1/8                             \\ \hline
+    3             & 7                                  & 1/7                             \\ \hline
+    4             & 7                                  & 1/7                             \\ \hline
+    5             & 7                                  & 1/7                             \\ \hline
+    6             & 7                                  & 1/7                             \\ \hline
+    \end{tabular}
+    \end{table}
+    Hence the node $1$ has closeness centrality of $\tfrac{1}{6}$, and the node $2$ has closeness centrality of $\tfrac{1}{8}$.
+    
+    The R code I used to check my answer is below:
+    \begin{verbatim}
+        # Find the closeness centralities of the nodes
+        closeness(g1)
+        
+        Result:
+                1         3         4         5         6         2 
+            0.1666667 0.1250000 0.1428571 0.1428571 0.1428571 0.1428571 
+    \end{verbatim}
+\end{answer}
